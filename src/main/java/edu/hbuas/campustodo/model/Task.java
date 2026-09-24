@@ -9,6 +9,12 @@ public class Task {
     private final long id;
     private final String title;
     private boolean completed;
+    private Priority priority;
+
+    /** 任务优先级：高 / 中 / 低 */
+    public enum Priority {
+        HIGH, MEDIUM, LOW
+    }
 
     public Task(long id, String title) {
         if (id <= 0) {
@@ -19,6 +25,8 @@ public class Task {
         }
         this.id = id;
         this.title = title.trim();
+        this.completed = false;
+        this.priority = Priority.MEDIUM;   // 新建任务默认 MEDIUM（Issue #1 验收标准）
     }
 
     public long getId() {
@@ -36,6 +44,18 @@ public class Task {
     public void complete() {
         completed = true;
     }
+
+    public Priority getPriority() {
+        return priority;
+    }
+
+        public void setPriority(Priority priority) {
+        if (priority == null) {
+            throw new IllegalArgumentException("priority 不能为 null");
+        }
+        this.priority = priority;
+    }
+
 
     @Override
     public boolean equals(Object other) {
