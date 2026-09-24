@@ -27,6 +27,7 @@ public class TaskService {
      * 按优先级筛选任务（Issue #1）。
      * 返回匹配优先级的任务快照；无匹配时返回空列表（非 null）；priority 为 null 时抛出异常。
      */
+    // CI 触发：确认工作流已在 main 生效（#4 合并后）
     public List<Task> filterByPriority(Priority priority) {
         if (priority == null) {
             throw new IllegalArgumentException("priority 不能为 null");
