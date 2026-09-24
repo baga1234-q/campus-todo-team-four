@@ -49,9 +49,13 @@ public class Task {
         return priority;
     }
 
-    public void setPriority(Priority priority) {
-        this.priority = priority == null ? Priority.MEDIUM : priority;
+        public void setPriority(Priority priority) {
+        if (priority == null) {
+            throw new IllegalArgumentException("priority 不能为 null");
+        }
+        this.priority = priority;
     }
+
 
     @Override
     public boolean equals(Object other) {
