@@ -1,43 +1,61 @@
 package edu.hbuas.campustodo.service;
 
 import edu.hbuas.campustodo.model.Task;
+import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 任务应用服务。学生将在功能分支中逐步扩展该类。
- */
-public class TaskService {
-    private final List<Task> tasks = new ArrayList<>();
-    private long nextId = 1;
+class TaskServiceTest {
 
-    public Task addTask(String title) {
-        Task task = new Task(nextId++, title);
-        tasks.add(task);
-        return task;
+    // ---------- 原有基线测试 ----------
+    @Test
+    void addTask_success() {
+        TaskService service = new TaskService();
+        Task task = service.addTask("测试任务");
+        assertNotNull(task);
+        assertEquals("测试任务", task.getTitle());
+        assertEquals(1L, task.getId());
+        assertFalse(task.isCompleted());
     }
 
-    public List<Task> listAll() {
-        return List.copyOf(tasks);
-    }
-        /** 按编号完成任务；编号不存在或已重复完成时抛出异常。 */
-    public void completeTask(long id) {
-        Task target = null;
-        for (Task t : listAll()) {
-            if (t.getId() == id) {
-                target = t;
-                break;
-            }
-        }
-        if (target == null) {
-            throw new IllegalArgumentException("任务不存在: id=" + id);
-        }
-        if (target.isCompleted()) {
-            throw new IllegalStateException("任务已完成，不能重复完成: id=" + id);
-        }
-                target.complete();
-
+    @Test
+    void addTask_emptyTitle_throwException() {
+        TaskService service = new TaskService();
+        assertThrows(IllegalArgumentException.class, () ->
+                service.addTask("")
+        );
     }
 
+    // ---------- 新增：任务完成功能测试 ----------
+    // 1. 正常完成任务，状态从false变为true
+    @Test
+    void completeTask_success() {
+        TaskService service = new TaskService();
+        Task task = service.addTask("完成实验报告");
+        assertFalse(task.isCompleted());
+
+        service.completeTask(task.getId());
+        assertTrue(task.isCompleted());
+    }
+
+    // 2. 完成不存在的任务ID，抛出IllegalArgumentException
+    @Test
+    void completeTask_notFoundId_throwException() {
+        TaskService service = new TaskService();
+        assertThrows(IllegalArgumentException.class, () ->
+                service.completeTask(999L)
+        );
+    }
+
+    // 3. 重复完成已完成的任务，抛出IllegalStateException
+    @Test
+    void completeTask_alreadyCompleted_throwException() {
+        TaskService service = new TaskService();
+        Task task = service.addTask("重复完成测试");
+        service.completeTask(task.getId());
+
+        assertThrows(IllegalStateException.class, () ->
+                service.completeTask(task.getId())
+        );
+    }
 }
