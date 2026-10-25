@@ -1,0 +1,13 @@
+# Prometheus 抓取配置（Sprint4 / Lab8）
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # CampusTodo 应用指标（Spring Boot Actuator /prometheus 端点）
+  - job_name: 'campus-todo-app'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['app:8080']
+        labels:
+          application: 'campustodo'
